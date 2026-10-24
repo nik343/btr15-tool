@@ -1,0 +1,27 @@
+# This repository publishes research documents now and the Android app later.
+# These categories are deliberately uncommittable by convention:
+
+# Firmware images (FiiO copyright — users import their own)
+*.bin
+*.bts
+*.btsnoop
+*.pcap
+*.pcapng
+
+# Signing identities and device evidence
+*.pem
+*.p12
+*.keystore
+*.jks
+*.jsonl
+work/
+build/
+captures/
+
+# Toolchain noise
+__pycache__/
+*.pyc
+.gradle/
+local.properties
+.DS_Store
+Thumbs.db
