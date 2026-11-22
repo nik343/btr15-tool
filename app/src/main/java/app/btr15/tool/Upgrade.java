@@ -391,6 +391,26 @@ final class Upgrade {
         return true;
     }
 
+    /**
+     * The whole context as space-separated four-digit words.  A refusal to stage
+     * has to name the field that stopped it, otherwise "not idle" covers an
+     * absent key, a short answer and a genuinely busy device with one sentence.
+     */
+    static String contextHex(int[] words) {
+        StringBuilder out = new StringBuilder(words.length * 5);
+        for (int i = 0; i < words.length; i++) {
+            if (i > 0) {
+                out.append(' ');
+            }
+            String hex = Integer.toHexString(words[i] & 0xFFFF);
+            for (int pad = hex.length(); pad < 4; pad++) {
+                out.append('0');
+            }
+            out.append(hex);
+        }
+        return out.toString();
+    }
+
     // ---- data pump ----------------------------------------------------------
 
     /**

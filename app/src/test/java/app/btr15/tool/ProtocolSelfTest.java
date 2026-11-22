@@ -136,6 +136,13 @@ public final class ProtocolSelfTest {
         expect(!moved, "jailbreak rewrites exactly the resume word");
         expect(Upgrade.stagedId(ERROR_CONTEXT) == 0x78D5E612L,
                 "staged id decodes from the little-endian halves");
+        expect("0001 0001 0002 0000".equals(Upgrade.contextHex(new int[] {1, 1, 2, 0})),
+                "journal dump renders every word as four hex digits");
+        String dump = Upgrade.contextHex(Upgrade.cleanBaseline(0x8001));
+        expect(dump.startsWith("8001 ") && dump.split(" ").length == Upgrade.CONTEXT_WORDS,
+                "journal dump covers all 19 words and keeps the sink prefix first");
+        expect(dump.indexOf("ff ", 0) < 0 && dump.indexOf("ffff") < 0,
+                "journal dump never prints a sign-extended word");
         expect(Upgrade.isCleanContext(Upgrade.cleanBaseline(0x8001)),
                 "proven clean baseline (prefix, 1, 1, 2, zeroed journal) accepted");
         expect(Upgrade.isCleanContext(Upgrade.cleanBaseline(0x0001)),

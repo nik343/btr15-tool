@@ -29,6 +29,8 @@ final class Session {
     private final Deque<Gaia.Frame> inbox = new ArrayDeque<>();
     private final Deque<Upgrade.Message> upgradeQueue = new ArrayDeque<>();
     private final List<String> transcript = new ArrayList<>();
+    /** Set by the last key-4 read: true when the device answered "absent" (status 5). */
+    private boolean upgradeContextAbsent;
     private final long ackTimeoutMs;
     private long dataFramesSent;
     private long firmwareBytesSent;
@@ -317,10 +319,21 @@ final class Session {
     int[] readUpgradeContext() throws FirmwareException {
         byte[] key = {(byte) (Upgrade.CONTEXT_PS_KEY >>> 8), (byte) Upgrade.CONTEXT_PS_KEY};
         Gaia.Frame ack = command(Gaia.RETRIEVE_PS_KEY, key, 0, 5);
-        if (ack.status() == 5) {
-            return new int[Upgrade.CONTEXT_WORDS];
-        }
-        return Upgrade.parseRetrieveAck(ack);
+        upgradeContextAbsent = ack.status() == 5;
+        int[] words = upgradeContextAbsent
+                ? new int[Upgrade.CONTEXT_WORDS]
+                : Upgrade.parseRetrieveAck(ack);
+        // Every export carries the live context, so a report of "not idle" can be
+        // read without decoding frames by hand.  Status 5 is named, not implied:
+        // nineteen zeros from an absent key look exactly like a clean journal.
+        log("CTX " + Upgrade.contextHex(words)
+                + (upgradeContextAbsent ? " (key 4 absent, status 5)" : ""));
+        return words;
+    }
+
+    /** True when the last {@link #readUpgradeContext()} saw status 5, not a stored key. */
+    boolean upgradeContextAbsent() {
+        return upgradeContextAbsent;
     }
 
     void storeUpgradeContext(int[] words) throws FirmwareException {

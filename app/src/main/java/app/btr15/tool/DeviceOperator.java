@@ -250,13 +250,16 @@ final class DeviceOperator {
         return outcome;
     }
 
-    /** Diagnosis line: the live resume word and staged id of the context. */
+    /** Diagnosis line: the whole live context, so a refusal names its own cause. */
     String describeContext() throws FirmwareException {
         Session s = target.open();
         try {
             int[] words = s.readUpgradeContext();
-            return "Device context: resume word " + words[Upgrade.RESUME_WORD]
-                    + ", staged id " + Long.toHexString(Upgrade.stagedId(words));
+            return "Device context: journal " + Upgrade.contextHex(words)
+                    + " (resume word " + words[Upgrade.RESUME_WORD]
+                    + ", staged id " + Long.toHexString(Upgrade.stagedId(words))
+                    + (s.upgradeContextAbsent() ? ", key 4 absent (status 5)" : "")
+                    + ")";
         } finally {
             s.closeQuietly();
         }

@@ -161,6 +161,8 @@ final class Workflows {
         if (!Upgrade.isCleanContext(words)) {
             throw new FirmwareException("device is not idle (resume word " + words[13]
                     + ", staged id " + Long.toHexString(Upgrade.stagedId(words))
+                    + "; journal " + Upgrade.contextHex(words)
+                    + (s.upgradeContextAbsent() ? "; key 4 absent (status 5)" : "")
                     + "); run Recovery first");
         }
     }
