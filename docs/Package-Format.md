@@ -1,4 +1,4 @@
-# Update package format: `APPUHDR5` / `PARTDATA` for `$QCC512Xx`
+# Update Package Format: `APPUHDR5` / `PARTDATA` for `$QCC512Xx`
 
 A FiiO BTR15 Bluetooth update (`.bin`, ~1.9 MB) is Qualcomm's standard
 QCC512x OTA container. Nothing about it is FiiO-secret; the public ADK
@@ -39,7 +39,7 @@ new Upgrade ID).
   salt length **222** (the maximum: 256 − 32 − 2). Verifiers must accept the
   maximum-salt form explicitly.
 - The verifying public key is *not* in the package. It is compiled into the
-  Apps P1 program running on the device (see [signing-key.md](signing-key.md)).
+  Apps P1 program running on the device (see [Signing-Key.md](Signing-Key.md)).
 
 Because the header is unsigned and partition payloads are staged to bank
 **before** footer validation, the footer check happens in the running P1
@@ -72,5 +72,5 @@ Device-specific data is absent from every official package: Apps **P0**
 filesystem (one record holding `PSKEY_BDADDR`), and customer/production
 banks. During a normal copy, P0's `ImageUpgradeCopy()` preserves sections
 that are absent from the package — which is why promoting an image through
-the copy path in [jailbreak.md](jailbreak.md) leaves the Bluetooth identity
+the copy path in [Jailbreak.md](Jailbreak.md) leaves the Bluetooth identity
 intact.

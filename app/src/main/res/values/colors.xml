@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The icon is the app's own white paper: the adaptive foreground is the
+         black BTR15 outline, so the background layer is flat white. -->
+    <color name="ic_launcher_background">#FFFFFFFF</color>
+</resources>

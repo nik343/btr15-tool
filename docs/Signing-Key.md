@@ -10,6 +10,8 @@ identity — including its own future updates.
 
 In v3.8 Apps P1 the FiiO key is a **514-byte block at P1 offset `0x966BC`**
 (SHA-256 of the stock block: `18FDF35D72FB776BBEC471924F570B331DB6822AF6B665C1F09696D11BE12CDF`).
+The same 514 bytes with the same digest ship in every examined release,
+relocated — v4.4 keeps the block at `0x95420`.
 Layout in the device's "XAP" storage form — every uint16 stored with its two
 bytes swapped:
 
@@ -64,7 +66,7 @@ packages from the new private key** through the normal accepted-signature
 path: stage, `TRANSFER_COMPLETE_IND`, copy, trial boot, commit. No journal
 trickery on subsequent updates. Conversely, genuine FiiO-signed packages are
 rejected with `0x003D` while a custom P1 is trusted — the proof step in
-[stock-restore.md](stock-restore.md).
+[Stock-Restore.md](Stock-Restore.md).
 
 ## The developer key
 

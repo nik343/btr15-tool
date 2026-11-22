@@ -1,7 +1,7 @@
-# This repository publishes research documents now and the Android app later.
-# These categories are deliberately uncommittable by convention:
+# The app is committed, the docs are committed. These categories stay out:
 
-# Firmware images (FiiO copyright — users import their own)
+# Firmware images (FiiO copyright — users import their own). Not committed
+# anywhere, including the app's test fixtures.
 *.bin
 *.bts
 *.btsnoop
@@ -18,7 +18,10 @@ work/
 build/
 captures/
 
-# Toolchain noise
+# Build output and toolchain noise
+*.apk
+*.apks
+app/build/
 __pycache__/
 *.pyc
 .gradle/

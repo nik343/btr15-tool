@@ -1,4 +1,4 @@
-# Wire protocol: GAIA v1 + Qualcomm Upgrade over Bluetooth SPP
+# Wire Protocol: GAIA v1 + Qualcomm Upgrade over Bluetooth SPP
 
 Everything runs on a single Bluetooth Classic SPP (RFCOMM) connection to the
 stock service, SDP class `00001101-0000-1000-8000-00805F9B34FB`. The BTR15

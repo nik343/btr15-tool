@@ -1,4 +1,4 @@
-# Firmware patches
+# Firmware Patches
 
 ## Automute removal (2 sites)
 
@@ -16,12 +16,14 @@ timer:
 
 Each site is located by its 14-byte context (`… 11 f0 35 eb …` distinguishes
 the left DAC, `… 11 f0 25 ea …` the right), so a relocated future firmware
-can be re-derived instead of blind-poked.
+can be re-derived instead of blind-poked. The same pair is present in every
+examined release: byte-identical at these offsets in v3.5; in v4.4 at P1
+`0x14D2`/`0x1502` (package `0x13DCBA`/`0x13DCEA`).
 
 ## Developer signing key (1 site)
 
 The 514-byte trusted-RSA constant block — format, offsets, replacement rules:
-**[signing-key.md](signing-key.md)**. In package coordinates the v3.8 block
+**[Signing-Key.md](Signing-Key.md)**. In package coordinates the v3.8 block
 sits at `0x1D2EA4`.
 
 With both edits applied, the package delta against the signed official v3.8

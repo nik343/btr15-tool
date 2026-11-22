@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from btr15_handdrawn_matrix_white.svg; vector-only asset. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+ android:width="100dp" android:height="100dp"
+ android:viewportWidth="100" android:viewportHeight="100">
+  <path android:fillColor="#FFFFFFFF" android:pathData="M0,0H100V100H0Z" />
+  <group android:translateX="34" android:translateY="10">
+    <!-- side controls -->
+    <group android:translateX="-0.5598">
+      <path android:fillColor="#FFFFFFFF" android:pathData="M31.00,11.75 H32.35 C32.71,11.75 33.00,12.04 33.00,12.40 V13.90 C33.00,14.26 32.71,14.55 32.35,14.55 H31.00 Z" android:strokeColor="#FF282828" android:strokeWidth="0.3196" android:strokeLineCap="round" android:strokeLineJoin="round" />
+      <path android:fillColor="#FFFFFFFF" android:pathData="M31.00,19.05 H32.35 C32.71,19.05 33.00,19.34 33.00,19.70 V22.70 C33.00,23.06 32.71,23.35 32.35,23.35 H31.00 Z" android:strokeColor="#FF282828" android:strokeWidth="0.3196" android:strokeLineCap="round" android:strokeLineJoin="round" />
+      <path android:fillColor="#FFFFFFFF" android:pathData="M31.00,27.95 H32.35 C32.71,27.95 33.00,28.24 33.00,28.60 V45.00 C33.00,45.36 32.71,45.65 32.35,45.65 H31.00 Z" android:strokeColor="#FF282828" android:strokeWidth="0.3196" android:strokeLineCap="round" android:strokeLineJoin="round" />
+      <path android:fillColor="#FFFFFFFF" android:pathData="M31.00,57.95 H32.35 C32.71,57.95 33.00,58.24 33.00,58.60 V59.75 C33.00,60.11 32.71,60.40 32.35,60.40 H31.00 Z" android:strokeColor="#FF282828" android:strokeWidth="0.3196" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M3.20,0.55              H28.75              C30.25,0.55 31.45,3.20 31.45,5.70              V66.40              C31.45,68.85 30.25,71.65 28.75,71.65              H3.10              C1.55,71.65 0.55,69.00 0.55,66.40              V5.55              C0.55,3.10 1.70,0.55 3.20,0.55 Z" android:strokeColor="#FF282828" android:strokeWidth="0.3196" android:strokeLineCap="round" android:strokeLineJoin="round" />
+  </group>
+  <!-- Display intentionally off: no matrix cells. -->
+</vector>
+

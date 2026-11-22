@@ -30,7 +30,7 @@ the genuine trust chain works end to end.
 ## Proof of rejection (the device is really stock again)
 
 Build a dev-signed candidate (any patch set) and stage it exactly like
-[jailbreak.md phase 1](jailbreak.md). A genuine stock device must answer the
+[Jailbreak.md phase 1](Jailbreak.md). A genuine stock device must answer the
 completed transfer with exactly `ERRORWARN_IND 0x003D`. If it were accepted,
 your custom key would still be trusted and the restore would have silently
 failed.
@@ -42,7 +42,7 @@ After the proof, choose deliberately:
   let the link drop, reconnect, and confirm the journal reads the clean
   vector. Device is stock, clean, done.
 - **Continue into a re-jailbreak** — from the footer-failure state, the
-  jailbreak simply resumes at [phase 2](jailbreak.md#phase-2--repair-the-journal-by-exactly-one-word);
+  jailbreak simply resumes at [phase 2](Jailbreak.md#phase-2--repair-the-journal-by-exactly-one-word);
   the staged candidate you just used as proof is the image that gets
   promoted, so one session can chain stage → rejection → repair → cold
   cycle → zero-byte resume → commit without any rebuild.
