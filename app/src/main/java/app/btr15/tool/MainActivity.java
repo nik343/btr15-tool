@@ -1598,9 +1598,10 @@ public final class MainActivity extends Activity {
         } catch (Exception error) {
             appendFlashLog("");
             appendErrorLog(error);
-            appendFlashLog("If the device was mid-transaction the journal kept the state:"
-                    + " press \"Recover unfinished transaction\" below, or use the Firmware"
-                    + " step's Recovery button.");
+            // Promise Recovery only when there is a journal to resume; a refusal
+            // before the first write leaves the screen without that button.
+            appendFlashLog(FlashLogText.failureAdvice(
+                    pendingJournalExists() || journalLookupError != null));
             finishFlashPreparation(token, "STOPPED");
         } finally {
             // One capture point, so a failure is exportable too: the hex

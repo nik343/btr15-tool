@@ -5,6 +5,16 @@ final class FlashLogText {
     static final String RESTART_REQUIRED = "RESTART REQUIRED";
     static final String UPDATE_REJECTED = "UPDATE REJECTED";
 
+    /** Printed after a failure only when a journal exists for Recovery to resume. */
+    static final String RECOVERY_ADVICE =
+            "If the device was mid-transaction the journal kept the state: press"
+                    + " \"Recover unfinished transaction\" below, or use the Firmware"
+                    + " step's Recovery button.";
+    /** Printed after a failure that never got as far as writing a journal. */
+    static final String NOTHING_JOURNALED =
+            "No transaction was journaled on this phone and this run wrote nothing to the"
+                    + " device, so there is nothing to recover.";
+
     private static final String PARTIAL_TRANSFER_LOST =
             "The partial transfer was lost when the app restarted; the device"
                     + " context was cleared safely — run the update again from scratch";
@@ -34,8 +44,17 @@ final class FlashLogText {
         return recoveryOutcome(line);
     }
 
-    static String recoveryFinishedStatus(String outcome) {
-        switch (outcome) {
+    /**
+     * The sentence printed under a failure.  Recovery is only promised when a
+     * journal actually exists: a run that refused at the idle check (or before
+     * it) wrote nothing, so the flash screen has no recovery button to offer and
+     * telling the user to press one was wrong.
+     */
+    static String failureAdvice(boolean journalPending) {
+        return journalPending ? RECOVERY_ADVICE : NOTHING_JOURNALED;
+    }
+
+    static String recoveryFinishedStatus(String outcome) {        switch (outcome) {
             case PARTIAL_TRANSFER_LOST:
                 return RESTART_REQUIRED;
             case PACKAGE_REJECTED:

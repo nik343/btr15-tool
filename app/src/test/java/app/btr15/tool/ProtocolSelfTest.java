@@ -148,6 +148,11 @@ public final class ProtocolSelfTest {
         expect(Upgrade.isCleanContext(Upgrade.cleanBaseline(0x0001)),
                 "both observed sink prefixes validate as clean");
         expect(!Upgrade.isCleanContext(ERROR_CONTEXT), "dirty context not mistaken for clean");
+        expect(FlashLogText.failureAdvice(true).contains("Recover unfinished transaction")
+                        && !FlashLogText.failureAdvice(false).contains("Recover unfinished transaction"),
+                "recovery is only offered when a journal exists to resume");
+        expect(FlashLogText.failureAdvice(false).contains("nothing to recover"),
+                "a run that never journaled says so instead of pointing at a missing button");
         expect(Upgrade.isCleanContext(new int[] {0x8003, 1, 1, 2,
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}),
                 "GATT transport with the config-reset bit is still an idle unit");
