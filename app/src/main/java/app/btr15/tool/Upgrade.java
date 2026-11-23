@@ -55,8 +55,47 @@ final class Upgrade {
     /** Footer signature digest mismatch: the stock trust rejection jailbreak rides on. */
     static final int FOOTER_VALIDATION_FAILED = 0x003D;
 
-    /** Sink context prefix words observed on BTR15 firmware (bit 15 = config reset). */
-    static final int[] VALID_SINK_PREFIXES = {0x0001, 0x8001};
+    /**
+     * Word 0 of the Upgrade context belongs to the sink application, not to the
+     * upgrade library (which journals from word 1).  ADK's sink_upgrade.c gives
+     * its layout exactly: bits 0-7 are the last GAIA transport that ran
+     * UPGRADE_CONNECT ({@code SINK_UPGRADE_TRANSPORT_MASK 0xFF}), bit 15 is the
+     * config-reset flag ({@code SINK_UPGRADE_CONFIG_RESET_BIT}), bits 8-14 are
+     * unused.  So it is a live state marker with a small enum in it, never a
+     * constant: 0x0001 and 0x8001 (SPP, as this tool connects) and 0x8003
+     * (GATT, a unit last upgraded over BLE) are all the same clean state.
+     */
+    static final int TRANSPORT_MASK = 0xFF;
+    static final int CONFIG_RESET_BIT = 0x8000;
+    /** gaia_transport_type: none, spp, rfcomm, gatt, accessory. */
+    static final int TRANSPORT_ACCESSORY = 4;
+
+    /** The transport recorded in context word 0 (gaia_transport_type value). */
+    static int contextTransport(int word) {
+        return word & TRANSPORT_MASK;
+    }
+
+    /** True when context word 0 carries the config-reset flag. */
+    static boolean isConfigReset(int word) {
+        return (word & CONFIG_RESET_BIT) != 0;
+    }
+
+    /** Whether word 0 names a transport the firmware can actually record. */
+    static boolean isValidContextPrefix(int word) {
+        return contextTransport(word) <= TRANSPORT_ACCESSORY;
+    }
+
+    /** Human name for the transport in word 0, for logs and refusals. */
+    static String transportName(int word) {
+        switch (contextTransport(word)) {
+            case 0: return "none";
+            case 1: return "spp";
+            case 2: return "rfcomm";
+            case 3: return "gatt";
+            case 4: return "accessory";
+            default: return "unknown(" + contextTransport(word) + ")";
+        }
+    }
 
     /**
      * Idle Upgrade context proven by verify_clean_v38: a valid sink prefix,
@@ -96,13 +135,10 @@ final class Upgrade {
     }
 
     private static void requireValidPrefix(int prefix) throws FirmwareException {
-        for (int valid : VALID_SINK_PREFIXES) {
-            if (prefix == valid) {
-                return;
-            }
+        if (!isValidContextPrefix(prefix)) {
+            throw new FirmwareException("unsupported sink context prefix 0x"
+                    + Integer.toHexString(prefix));
         }
-        throw new FirmwareException("unsupported sink context prefix 0x"
-                + Integer.toHexString(prefix));
     }
 
     /** Conservative 240-byte data bodies keep every GAIA packet at 252 bytes. */
@@ -370,17 +406,21 @@ final class Upgrade {
                 | ((words[STAGED_ID_HIGH_WORD] & 0xFFFFL) << 16);
     }
 
+    /**
+     * A journal with nothing staged: a transport word the firmware could have
+     * written, the active version/config words, and a zeroed transaction area.
+     * The transport itself is not compared — SPP (1) and GATT (3) are both
+     * ordinary, and which one a unit remembers only says how its last upgrade
+     * client connected.
+     */
     static boolean isCleanContext(int[] words) {
         if (words.length != CONTEXT_WORDS) {
             return false;
         }
-        boolean prefixValid = false;
-        for (int valid : VALID_SINK_PREFIXES) {
-            if (words[0] == valid) {
-                prefixValid = true;
-            }
+        if (!isValidContextPrefix(words[0])) {
+            return false;
         }
-        if (!prefixValid || words[1] != 1 || words[2] != 1 || words[3] != 2) {
+        if (words[1] != 1 || words[2] != 1 || words[3] != 2) {
             return false;
         }
         for (int i = 4; i < words.length; i++) {
@@ -389,6 +429,12 @@ final class Upgrade {
             }
         }
         return true;
+    }
+
+    /** "transport gatt, config reset set" — how word 0 reads in a log. */
+    static String describeContextWord(int word) {
+        return "transport " + transportName(word)
+                + (isConfigReset(word) ? ", config reset set" : "");
     }
 
     /**

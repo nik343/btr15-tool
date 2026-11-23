@@ -240,7 +240,7 @@ public final class IntegrationSelfTest {
         SimBtr15Peer busyPeer = new SimBtr15Peer(official, FirmwareProfile.fiioModulus());
         File busyDir = tempDir();
         int[] dirty = new int[Upgrade.CONTEXT_WORDS];
-        dirty[0] = Upgrade.VALID_SINK_PREFIXES[0];
+        dirty[0] = 0x0001; // transport spp, no config-reset flag
         dirty[Upgrade.RESUME_WORD] = Upgrade.RESUME_ERROR;
         dirty[Upgrade.STAGED_ID_LOW_WORD] = 0x1234;
         busyPeer.forceContext(dirty);

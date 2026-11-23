@@ -327,7 +327,8 @@ final class Session {
         // read without decoding frames by hand.  Status 5 is named, not implied:
         // nineteen zeros from an absent key look exactly like a clean journal.
         log("CTX " + Upgrade.contextHex(words)
-                + (upgradeContextAbsent ? " (key 4 absent, status 5)" : ""));
+                + (upgradeContextAbsent ? " (key 4 absent, status 5)" : "")
+                + " (" + Upgrade.describeContextWord(words[0]) + ")");
         return words;
     }
 

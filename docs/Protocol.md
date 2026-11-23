@@ -101,11 +101,23 @@ Resume points observed in `SYNC_CFM` / journal word 13:
 ## PS key 4: the upgrade-context journal
 
 Key 4 is a 19-word `uint16` array — the non-volatile journal of the upgrade
-state machine. Word 0 belongs to the sink application (bit 0 = GAIA transport
-selection; `0x8001` = also carries a pending app-config reset request); the
-upgrade library itself uses words 1–18 (`UpgradeInit()` receives the array at
-word-1 offset). Observed states (example uses Upgrade ID `de ad be ef`;
-`P` ∈ {`0x0001`, `0x8001`}):
+state machine. Word 0 belongs to the sink application; the upgrade library
+journals from word 1 (`UpgradeInit()` receives the array at that offset). ADK's
+`sink_upgrade.c` defines word 0 exactly:
+
+```c
+#define SINK_UPGRADE_TRANSPORT_MASK    (0xFF)      /* bits 0-7  */
+#define SINK_UPGRADE_CONFIG_RESET_BIT  (0x1U << 15) /* bit 15   */
+```
+
+Bits 0–7 are the `gaia_transport_type` of the last transport that ran
+`UPGRADE_CONNECT` (`0` none, `1` spp, `2` rfcomm, `3` gatt, `4` accessory), bit
+15 is a pending application-config reset, bits 8–14 are unused. So word 0 is a
+live marker, not a constant: `0x0001`/`0x8001` (SPP — what this tool uses) and
+`0x8003` (GATT — a unit whose last upgrade client connected over BLE) are the
+same clean state. Compare the field, never the whole word.
+
+Observed states (example uses Upgrade ID `de ad be ef`; `P` = word 0 as above):
 
 ```
 clean journal (what a healthy preflight read returns):
@@ -113,7 +125,7 @@ clean journal (what a healthy preflight read returns):
   0000 0000 0000 0000 0000 0000 0000 0000 0000
 
 footer-failure journal (after staging a dev-signed package on stock P1,
-example Upgrade ID de ad be ef; P = word 0, 0x0001 or 0x8001):
+example Upgrade ID de ad be ef; P = word 0, e.g. 0001, 8001 or 8003):
   P    0001 0001 0002 0000 0000 0001 0001 0001 0002
   0000 BEEF DEAD 0006 000A 0000 0000 0000 0000
                      ▲    ▲

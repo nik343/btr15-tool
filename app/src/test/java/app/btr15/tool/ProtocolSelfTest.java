@@ -148,6 +148,21 @@ public final class ProtocolSelfTest {
         expect(Upgrade.isCleanContext(Upgrade.cleanBaseline(0x0001)),
                 "both observed sink prefixes validate as clean");
         expect(!Upgrade.isCleanContext(ERROR_CONTEXT), "dirty context not mistaken for clean");
+        expect(Upgrade.isCleanContext(new int[] {0x8003, 1, 1, 2,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}),
+                "GATT transport with the config-reset bit is still an idle unit");
+        int[] upperBits = Upgrade.cleanBaseline(0x0001);
+        upperBits[0] = 0x4001;
+        expect(Upgrade.isCleanContext(upperBits),
+                "unused bits 8-14 in the transport word do not make a journal busy");
+        int[] badTransport = Upgrade.cleanBaseline(0x0001);
+        badTransport[0] = 0x0012;
+        expect(!Upgrade.isCleanContext(badTransport),
+                "a transport value the firmware cannot record is still refused");
+        expect("spp".equals(Upgrade.transportName(0x0001))
+                        && "gatt".equals(Upgrade.transportName(0x8003))
+                        && Upgrade.isConfigReset(0x8003) && !Upgrade.isConfigReset(0x0001),
+                "word 0 decodes as gaia_transport_type plus the config-reset bit");
         expect(!Upgrade.isCleanContext(Upgrade.journalContext(0x8001, 0L, 0)),
                 "staged header fields with a zeroed journal are not clean");
         expect(throwsFirmware(() -> Upgrade.cleanBaseline(0x1234)),
